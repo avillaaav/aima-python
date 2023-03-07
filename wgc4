@@ -1,0 +1,87 @@
+from search import *
+
+class WolfGoatCabbage(Problem):
+    def __init__(self):
+        self.initial = frozenset(['F', 'G', 'W', 'C'])
+        self.goal = frozenset([])
+
+    def goal_test(self, state):
+        return state == self.goal
+
+    def result(self, state, action):
+        if action == 'FG':
+            new_state = state - frozenset(['F', 'G'])
+        elif action == 'FC':
+            new_state = state - frozenset(['F', 'C'])
+        elif action == 'FW':
+            new_state = state - frozenset(['F', 'W'])
+        elif action == 'F':
+            new_state = state - frozenset(['F'])
+        elif action == 'CG':
+            new_state = state - frozenset(['C', 'G'])
+        elif action == 'WG':
+            new_state = state - frozenset(['W', 'G'])
+        elif action == 'W':
+            new_state = state - frozenset(['W'])
+        elif action == 'C':
+            new_state = state - frozenset(['C'])
+        elif action == 'GW':
+            new_state = state.union(['G', 'W'])
+        elif action == 'GC':
+            new_state = state.union(['G', 'C'])
+        elif action == 'CW':
+            new_state = state.union(['C', 'W'])
+        elif action == 'G':
+            new_state = state.union(['G'])
+        return frozenset(new_state)
+
+    def actions(self, state):
+        actions = []
+        if 'F' in state:
+            if 'C' in state:
+                actions.append('FC')
+            if 'W' in state:
+                actions.append('FW')
+            if 'G' in state:
+                actions.append('FG')
+            actions.append('F')
+        else:
+            if 'C' in state and 'G' in state:
+                actions.append('CG')
+            if 'W' in state and 'G' in state:
+                actions.append('WG')
+            if 'C' in state:
+                actions.append('C')
+            if 'W' in state:
+                actions.append('W')
+            if 'G' in state:
+                actions.append('G')
+        if 'C' in state and 'W' in state:
+            actions.append('CW')
+        if 'G' in state and 'W' in state:
+            actions.append('GW')
+        if 'G' in state and 'C' in state:
+            actions.append('GC')
+
+        # Solution-specific logic
+        if 'G' in state and 'F' in state:
+            actions.append('G')
+        if 'G' not in state and 'W' not in state:
+            actions.append('GW')
+        if 'G' not in state and 'C' not in state:
+            actions.append('GC')
+        if ('G' in state and 'W' in state) or ('G' in state and 'C' in state):
+            actions.append('F')
+        if ('G' in state and 'W' in state) or ('C' in state and 'G' in state):
+            actions.append('CG')
+        if ('G' in state and 'C' in state) or ('C' in state and 'W' in state):
+            actions.append('CW')
+
+        return actions
+
+if __name__ == '__main__':
+    wgc = WolfGoatCabbage()
+    solution = depth_first_graph_search(wgc).solution()
+    print(solution)
+    solution = breadth_first_graph_search(wgc).solution()
+    print(solution)

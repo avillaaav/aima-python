@@ -1,0 +1,48 @@
+from search import *
+
+class WolfGoatCabbage(Problem):
+
+    def __init__(self):
+        super().__init__(frozenset(['F', 'G', 'W', 'C']), frozenset())
+
+    def goal_test(self, state):
+        return state == frozenset(['F', 'G', 'W', 'C'])
+
+    def result(self, state, action):
+        if 'F' not in action:
+            return state
+        new_state = state.symmetric_difference(action)
+        if ('W' in new_state and 'G' in new_state and 'F' not in new_state) or \
+           ('G' in new_state and 'C' in new_state and 'F' not in new_state):
+            return state
+        return new_state
+        
+
+    def actions(self, state):
+        possible_actions = []
+        if 'F' in state:
+            for item1 in state:
+                for item2 in state:
+                    if item1 != item2 and item1 != 'F' and item2 != 'F':
+                        possible_actions.append(frozenset([item1, item2, 'F']))
+        return possible_actions
+
+if __name__ == '__main__':
+    wgc = WolfGoatCabbage()
+    state = wgc.initial
+    print("Initial state:", state)
+    for action in [{'F', 'G'}, {'F'}, {'C', 'F'}, {'G', 'F'}, {'W', 'F'}, {'F'}, {'G', 'F'}]:
+        print("Action:", action)
+        state = wgc.result(state, action)
+        print("New state:", state)
+    print("Goal test:", wgc.goal_test(state))
+
+    print()
+
+    state = wgc.initial
+    print("Initial state:", state)
+    for action in [{'F', 'G'}, {'F'}, {'W', 'F'}, {'G', 'F'}, {'C', 'F'}, {'F'}, {'G', 'F'}]:
+        print("Action:", action)
+        state = wgc.result(state, action)
+        print("New state:", state)
+    print("Goal test:", wgc.goal_test(state))
